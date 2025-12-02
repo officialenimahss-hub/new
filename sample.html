@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Google Sheets Response Form</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px;}
+    .form-container {
+      width: 350px; margin: auto; padding: 20px;
+      border: 1px solid #ccc; border-radius: 6px;
+      background: #f9f9f9;
+    }
+    input, textarea, button {
+      width: 100%; padding: 10px; margin-bottom: 12px;
+    }
+    button { background: #4CAF50; color:white; border:none; }
+  </style>
+</head>
+
+<body>
+  <div class="form-container">
+    <h2>Submit Your Response</h2>
+
+    <form id="responseForm">
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwdytQFEF7znneK-vp75Z0OhxwcliBl5IMf3ESMQFZkRekjCNHBmi8w8C7fjXfXKZhF/exec";
+
+    document.getElementById("responseForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const form = e.target;
+      const data = {
+        name: form.name.value,
+        email: form.email.value,
+        message: form.message.value
+      };
+
+      document.getElementById("status").innerText = "Sending...";
+
+      try {
+        const res = await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+
+        if (result.result === "success") {
+          document.getElementById("status").innerText = "Submitted successfully!";
+          form.reset();
+        }
+      } catch (err) {
+        document.getElementById("status").innerText = "Error submitting form.";
+      }
+    });
+  </script>
+
+</body>
+</html>
